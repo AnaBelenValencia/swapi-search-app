@@ -1,0 +1,78 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: swapi_db
+    environment:
+      POSTGRES_DB: swapi_stats
+      POSTGRES_USER: swapi_user
+      POSTGRES_PASSWORD: swapi_pass
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: swapi_backend
+    env_file:
+      - ./backend/.env.docker
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "php artisan migrate --force &&
+             php artisan serve --host=0.0.0.0 --port=8000"
+
+  queue-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: swapi_queue_worker
+    env_file:
+      - ./backend/.env.docker
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - db
+    command: >
+      sh -c "php artisan queue:work --verbose --tries=3 --timeout=90"
+
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: swapi_scheduler
+    env_file:
+      - ./backend/.env.docker
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - db
+    # Corre el scheduler de Laravel, donde tienes programado el job cada 5 minutos
+    command: >
+      sh -c "php artisan schedule:work"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: swapi_frontend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000/api
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+volumes:
+  db_data:

@@ -1,0 +1,6 @@
+/backend/vendor
+/backend/storage/logs
+/backend/.env
+/backend/.env.*
+/frontend/node_modules
+/frontend/dist
