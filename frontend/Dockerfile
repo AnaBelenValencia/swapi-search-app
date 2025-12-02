@@ -3,7 +3,7 @@ FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
-COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* .npmrc* ./ 2>/dev/null || true
+COPY package.json package-lock.json ./
 
 RUN npm install
 
