@@ -19,7 +19,7 @@ A full-stack Star Wars search application built with React and Laravel. Search f
 - Custom CSS (no UI frameworks)
 
 ### Backend
-- Laravel 11 (PHP 8.2)
+- Laravel 11 (PHP 8.4)
 - PostgreSQL database
 - SWAPI (swapi.dev) as data source
 - Queue system for background jobs
