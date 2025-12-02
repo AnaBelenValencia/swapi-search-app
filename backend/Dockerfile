@@ -26,10 +26,13 @@ WORKDIR /var/www/html
 
 # Copy composer files and install dependencies first (better layer caching)
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
 # Copy the rest of the application
 COPY . .
+
+# Run composer scripts after all files are available
+RUN composer dump-autoload --optimize
 
 # Permissions para storage y cache
 RUN chown -R www-data:www-data storage bootstrap/cache
