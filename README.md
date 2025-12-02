@@ -82,19 +82,30 @@ git clone <repository-url>
 cd lawnstarter-challenge
 ```
 
-2. Build and start all containers:
+2. Create the Docker environment file:
+
+```bash
+cp backend/.env.docker.example backend/.env.docker
+```
+
+> **Note:** After starting the containers, you should generate a new APP_KEY by running:
+> ```bash
+> docker-compose exec backend php artisan key:generate
+> ```
+
+3. Build and start all containers:
 
 ```bash
 docker-compose up --build -d
 ```
 
-3. Wait for containers to be ready (first run may take a few minutes):
+4. Wait for containers to be ready (first run may take a few minutes):
 
 ```bash
 docker-compose ps
 ```
 
-4. The application will be available at:
+5. The application will be available at:
 
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:8000/api
